@@ -1,0 +1,6 @@
+name: OreRatio
+version: ${project.version}
+main: fr.sandro642.github.OreRatio
+author: Sandro642
+website: https://github.com/Sandro642/OreRatio
+api-version: '1.21.11'
