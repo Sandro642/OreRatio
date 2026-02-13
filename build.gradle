@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'fr.sandro642.github'
+version = '0.1.0'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Spigot API dependency
+    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
+}
+
+test {
+    useJUnitPlatform()
+}
