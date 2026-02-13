@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'maven-publish'
 }
 
 group = 'fr.sandro642.github'
@@ -45,6 +47,63 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
 }
 
-test {
+application {
+    mainClass = 'fr.sandro642.github.OreRatio'
+}
+
+tasks.jar {
+    manifest {
+        attributes 'Main-Class': 'fr.sandro642.github.OreRatio'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.test {
     useJUnitPlatform()
+}
+
+java {
+    withSourcesJar()
+    //withJavadocJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = project.group.toString()
+            artifactId = 'OreRatio'
+            version = project.version.toString()
+            pom {
+                name = 'OreRatio'
+                description = ''
+                url = 'https://github.com/Sandro642/OreRatio'
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://raw.githubusercontent.com/Sandro642/OreRatio/refs/heads/main/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sandro642'
+                        name = 'Sandro'
+                        email = 'sandro33810@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/sandro642/OreRatio.git'
+                    developerConnection = 'scm:git:ssh://github.com/sandro642/OreRatio.git'
+                    url = 'https://github.com/sandro642/OreRatio'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'LocalRepo'
+            url = uri(layout.buildDirectory.dir('repo'))
+        }
+    }
 }
