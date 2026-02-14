@@ -21,7 +21,7 @@ public class CheckUpdates {
      * It sends a GET request to the tags endpoint of the OreRatio repository
      * and retrieves the name of the first tag, which represents the latest version.
      */
-    public String fetchVersion() {
+    private String fetchVersion() {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -49,15 +49,14 @@ public class CheckUpdates {
      * Compares the fetched version with the current version.
      * If they are different, it prints a message indicating that a new version is available.
      */
-    public void isLatestVersion() {
-        String OreRatio = "\u001B[94m[OreRatio] \u001B[0m";
-
+    public String isLatestVersion() {
         String fetchedVersion = fetchVersion();
         if (fetchedVersion.equals("Error") || fetchedVersion.equals("No tags found")) {
-            System.out.println(OreRatio + "Could not fetch the latest version.");
+            return "Could not fetch the latest version.";
         } else if (!fetchedVersion.equals(Version.VERSION)) {
-            System.out.println(OreRatio + "A new version is available: " + fetchedVersion);
+            return "A new version is available: " + fetchedVersion;
         }
+        return null;
     }
 
 }

@@ -45,6 +45,7 @@ dependencies {
 
     // Spigot API dependency
     compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
+    implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
 }
 
 application {
