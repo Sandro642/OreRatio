@@ -1,6 +1,7 @@
 package fr.sandro642.github;
 
 import fr.sandro642.github.core.cmd.OreRatioCommands;
+import fr.sandro642.github.core.events.EventGui;
 import fr.sandro642.github.db.DatabaseService;
 import fr.sandro642.github.update.CheckUpdates;
 import fr.sandro642.github.update.Version;
@@ -22,8 +23,9 @@ public class OreRatio extends JavaPlugin {
         Bukkit.getLogger().info(OreRatio + checkUpdates.isLatestVersion());
 
         // Loaders
-        initDB();
+        initEvents();
         initCommands();
+        initDB();
     }
 
     private void initDB() {
@@ -42,6 +44,16 @@ public class OreRatio extends JavaPlugin {
 
         } catch (Exception e) {
             Bukkit.getLogger().severe(OreRatio + "Failed to initialize commands: " + e.getMessage());
+        }
+    }
+
+    private void initEvents() {
+        try {
+            Bukkit.getLogger().info(OreRatio + "Initializing events...");
+            getServer().getPluginManager().registerEvents(new EventGui(), this);
+
+        } catch (Exception e) {
+            Bukkit.getLogger().severe(OreRatio + "Failed to initialize events: " + e.getMessage());
         }
     }
 

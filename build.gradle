@@ -2,10 +2,23 @@ plugins {
     id 'java'
     id 'application'
     id 'maven-publish'
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 }
 
 group = 'fr.sandro642.github'
 version = '0.1.0'
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "modid" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+
+}
 
 task generateVersionClass {
     doLast {
@@ -44,8 +57,15 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Spigot API dependency
-    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
+    compileOnly 'org.spigotmc:spigot-api:1.21.11-R0.2-SNAPSHOT'
     implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
+
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 application {
