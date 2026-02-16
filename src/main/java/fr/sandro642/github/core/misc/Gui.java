@@ -490,8 +490,6 @@ public class Gui {
         currentPage++;
         pagesSwap.put(player, currentPage);
 
-        Logger.getInstance().INFO(String.valueOf(currentPage));
-
         if (isAddOres) {
             addOresMenu(player, true, currentPage);
         } else {
@@ -507,8 +505,6 @@ public class Gui {
         currentPage--;
         pagesSwap.put(player, currentPage);
 
-        Logger.getInstance().INFO(String.valueOf(currentPage));
-
         if (isAddOres) {
             addOresMenu(player, true, currentPage);
         } else {
@@ -517,7 +513,14 @@ public class Gui {
     }
 
     public int getCurrentPage(Player player) {
-        return pagesSwap.getOrDefault(player, 1);
+        int currentPageNum = pagesSwap.getOrDefault(player, 1);
+        int totalPages = Gui.getInstance().getTotalPages();
+
+        if (totalPages == 0 || currentPageNum > totalPages) {
+            return 1;
+        }
+
+        return currentPageNum;
     }
 
     public int getTotalPages() {

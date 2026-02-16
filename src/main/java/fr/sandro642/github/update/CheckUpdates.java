@@ -3,6 +3,7 @@ package fr.sandro642.github.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.bukkit.Bukkit;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -54,9 +55,10 @@ public class CheckUpdates {
         if (fetchedVersion.equals("Error") || fetchedVersion.equals("No tags found")) {
             return "Could not fetch the latest version.";
         } else if (!fetchedVersion.equals(Version.VERSION)) {
+            Bukkit.getLogger().info("A new version is available: " + fetchedVersion);
             return "A new version is available: " + fetchedVersion;
+        } else {
+            return "You are using the latest version";
         }
-        return null;
     }
-
 }

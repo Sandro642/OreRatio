@@ -11,19 +11,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class EventGui implements Listener {
 
-    private int currentPage(Player player) {
-        if (Gui.getInstance().getCurrentPage(player) > Gui.getInstance().getTotalPages()) {
-            player.sendMessage("CurrentPage " + Gui.getInstance().getCurrentPage(player));
-            player.sendMessage("TotalPages " + Gui.getInstance().getTotalPages());
-            return 0;
-        } else {
-            player.sendMessage("currentPage else " + Gui.getInstance().getCurrentPage(player));
-            return Gui.getInstance().getCurrentPage(player);
-        }
-    }
-
     @EventHandler
-    public void onIventoryClickEvent(InventoryClickEvent event) {
+    public void onInventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ItemStack itemStack = event.getCurrentItem();
 
@@ -45,13 +34,13 @@ public class EventGui implements Listener {
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     Gui.getInstance().isAddOres = true;
                     Gui.getInstance().setupInventory(player, false);
-                    Gui.getInstance().addOresMenu(player, true, currentPage(player));
+                    Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
                 }
                 else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("§b➢ Remove Ores")) {
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     Gui.getInstance().isAddOres = false;
                     Gui.getInstance().setupInventory(player, false);
-                    Gui.getInstance().removeOresMenu(player, true, currentPage(player));
+                    Gui.getInstance().removeOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
                 }
                 else if (itemStack.getType() == Material.BARRIER && displayName.equalsIgnoreCase("➢ Exit")) {
                     Gui.getInstance().setupInventory(player, false);
@@ -82,10 +71,15 @@ public class EventGui implements Listener {
                     Gui.getInstance().addOresMenu(player, true, 1);
                 }
 
-                else if (displayName.equalsIgnoreCase("§f➢ Select All")) {player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                    Gui.getInstance().listOfBlocks.addAll(Gui.getInstance().getItems());
-                    Gui.getInstance().addOresMenu(player, false);
-                    Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
+                else if (displayName.equalsIgnoreCase("§f➢ Select All")) {
+                    if (!Gui.getInstance().listOfBlocks.equals(Gui.getInstance().getItems())) {
+                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                        Gui.getInstance().listOfBlocks.addAll(Gui.getInstance().getItems());
+                        Gui.getInstance().addOresMenu(player, false);
+                        Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
+                    } else {
+                        player.sendMessage("You can't select more than once time all items");
+                    }
                 }
 
                 else if (itemStack.getType() != Material.WHITE_STAINED_GLASS_PANE && itemStack.getType() != Material.BLACK_STAINED_GLASS_PANE  && itemStack.getType() != Material.PLAYER_HEAD && itemStack.getType() != Material.AIR) {
