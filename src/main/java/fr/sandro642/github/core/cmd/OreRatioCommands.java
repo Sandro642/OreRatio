@@ -3,12 +3,17 @@ package fr.sandro642.github.core.cmd;
 import fr.sandro642.github.core.misc.Gui;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-public class OreRatioCommands implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class OreRatioCommands implements TabExecutor {
 
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command cmd, @NonNull String msg, @NonNull String @NonNull [] args) {
@@ -45,5 +50,21 @@ public class OreRatioCommands implements CommandExecutor {
         }
 
         return false;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NonNull CommandSender sender,
+                                                @NonNull Command cmd,
+                                                @NonNull String msg,
+                                                @NonNull String[] args) {
+
+        final List<String> validArguments = new ArrayList<>();
+
+        if (args.length == 1) {
+            StringUtil.copyPartialMatches(args[0], List.of("help", "setup", "admin"), validArguments);
+            return  validArguments;
+        }
+
+        return List.of();
     }
 }

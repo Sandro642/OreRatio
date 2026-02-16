@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
+import net.minecraft.network.chat.Component;
 
 import java.net.URL;
 import java.util.*;
@@ -32,20 +33,16 @@ public class Gui {
 
         if (meta == null) return head;
 
-        // 1. Créer un profil de joueur factice
         PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID());
         PlayerTextures textures = profile.getTextures();
 
         try {
-            // 2. Décoder la valeur Base64 pour obtenir l'URL de la texture
             String decoded = new String(Base64.getDecoder().decode(value));
-            // On extrait l'URL du JSON (méthode rapide)
             String urlString = decoded.substring(decoded.indexOf("http"), decoded.lastIndexOf("\""));
 
             textures.setSkin(new URL(urlString));
             profile.setTextures(textures);
 
-            // 3. Appliquer le profil au Meta
             meta.setOwnerProfile(profile);
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,7 +53,7 @@ public class Gui {
     }
 
     public void setupInventory(Player player, boolean status) {
-        Inventory setupInventory = Bukkit.createInventory(null, 9, "[OreRatio] ➢ Setup Menu");
+        Inventory setupInventory = Bukkit.createInventory(null, 9, "[OreRatio] Setup Menu");
 
         ItemStack glasswhite = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
         ItemMeta glasswhitemeta = glasswhite.getItemMeta();
@@ -121,7 +118,12 @@ public class Gui {
     }
 
     public Inventory addOresMenu(Player player, boolean status, int currentPage) {
-        Inventory addOresInventory = Bukkit.createInventory(null, 54, "➢ AddOres Menu | Page : " + getCurrentPage(player) + " / " + getTotalPages());
+        Inventory addOresInventory = Bukkit.createInventory(null, 54, "[OreRatio] AddOres Menu");
+
+        if (status) {
+            String actionBarMessage = "§6Page : " + currentPage + " / " + getTotalPages();
+            sendActionBar(player, actionBarMessage);
+        }
 
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
@@ -216,7 +218,12 @@ public class Gui {
     }
 
     public Inventory removeOresMenu(Player player, boolean status, int currentPage) {
-        Inventory removeOresInventory = Bukkit.createInventory(null, 54, "➢ Rem.Ores Menu | Page : " + getCurrentPage(player) + " / " + getTotalPages());
+        Inventory removeOresInventory = Bukkit.createInventory(null, 54, "[OreRatio] RemoveOres Menu");
+
+        if (status) {
+            String actionBarMessage = "§6Page : " + currentPage + " / " + getTotalPages();
+            sendActionBar(player, actionBarMessage);
+        }
 
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
@@ -394,6 +401,21 @@ public class Gui {
 
     public static Gui getInstance() {
         return INSTANCE;
+    }
+
+    private void sendActionBar(Player player, String message) {
+        Component component = Component.literal(message);
+        try {
+            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer").cast(player);
+            Object handle = craftPlayer.getClass().getMethod("getHandle").invoke(craftPlayer);
+            Object connection = handle.getClass().getField("connection").get(handle);
+            Object packet = Class.forName("net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket")
+                    .getConstructor(net.minecraft.network.chat.Component.class)
+                    .newInstance(component);
+            connection.getClass().getMethod("send", net.minecraft.network.protocol.Packet.class).invoke(connection, packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

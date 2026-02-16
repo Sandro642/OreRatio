@@ -18,6 +18,12 @@ public class EventGui implements Listener {
         ItemStack itemStack = event.getCurrentItem();
         InventoryAction action = event.getAction();
 
+        // Vérifier que le joueur est dans l'un des inventaires concernés
+        String inventoryTitle = event.getView().getTitle();
+        if (!inventoryTitle.contains("[OreRatio]")) {
+            return;
+        }
+
         event.setCancelled(true);
 
         if (itemStack == null) return;
