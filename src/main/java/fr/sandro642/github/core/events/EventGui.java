@@ -6,19 +6,27 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EventGui implements Listener {
 
+    private int currentPage(Player player) {
+        if (Gui.getInstance().getCurrentPage(player) > Gui.getInstance().getTotalPages()) {
+            player.sendMessage("CurrentPage " + Gui.getInstance().getCurrentPage(player));
+            player.sendMessage("TotalPages " + Gui.getInstance().getTotalPages());
+            return 0;
+        } else {
+            player.sendMessage("currentPage else " + Gui.getInstance().getCurrentPage(player));
+            return Gui.getInstance().getCurrentPage(player);
+        }
+    }
+
     @EventHandler
     public void onIventoryClickEvent(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ItemStack itemStack = event.getCurrentItem();
-        InventoryAction action = event.getAction();
 
-        // Vérifier que le joueur est dans l'un des inventaires concernés
         String inventoryTitle = event.getView().getTitle();
         if (!inventoryTitle.contains("[OreRatio]")) {
             return;
@@ -26,88 +34,113 @@ public class EventGui implements Listener {
 
         event.setCancelled(true);
 
-        if (itemStack == null) return;
+        if (itemStack == null || itemStack.getType() == Material.AIR) return;
+        if (itemStack.getItemMeta() == null || itemStack.getItemMeta().getDisplayName() == null) return;
+
+        String displayName = itemStack.getItemMeta().getDisplayName();
 
         if (player.hasPermission("oreratio.use")) {
-            if (itemStack.getType() == Material.PLAYER_HEAD && itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("§b➢ Add Ores")) {
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                Gui.getInstance().isAddOres = true;
-
-                Gui.getInstance().setupInventory(player, false);
-                Gui.getInstance().addOresMenu(player, true);
+            if (inventoryTitle.equalsIgnoreCase("[OreRatio] Setup Menu")) {
+                if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("§b➢ Add Ores")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().isAddOres = true;
+                    Gui.getInstance().setupInventory(player, false);
+                    Gui.getInstance().addOresMenu(player, true, currentPage(player));
+                }
+                else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("§b➢ Remove Ores")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().isAddOres = false;
+                    Gui.getInstance().setupInventory(player, false);
+                    Gui.getInstance().removeOresMenu(player, true, currentPage(player));
+                }
+                else if (itemStack.getType() == Material.BARRIER && displayName.equalsIgnoreCase("➢ Exit")) {
+                    Gui.getInstance().setupInventory(player, false);
+                }
+                return;
             }
 
-            else if (itemStack.getType() == Material.PLAYER_HEAD && itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("§b➢ Remove Ores")) {
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                Gui.getInstance().isAddOres = false;
-
-                Gui.getInstance().setupInventory(player, false);
-                Gui.getInstance().removeOresMenu(player, true);
-            }
-
-            else if (itemStack.getType() == Material.BARRIER && itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("➢ Exit")) {
-                Gui.getInstance().setupInventory(player, false);
-            }
-
-            else if (itemStack.getType() == Material.BARRIER && itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("➢ Main Page")) {
-                if (Gui.getInstance().isAddOres) {
+            if (inventoryTitle.equalsIgnoreCase("[OreRatio] AddOres Menu")) {
+                if (itemStack.getType() == Material.BARRIER && displayName.equalsIgnoreCase("➢ Main Page")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     Gui.getInstance().addOresMenu(player, false);
                     Gui.getInstance().setupInventory(player, true);
-                } else {
+                }
+
+                else if (displayName.equalsIgnoreCase("§f➢ §cBefore")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().previousPage(player);
+                }
+
+                else if (displayName.equalsIgnoreCase("§f➢ §cAfter")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().nextPage(player);
+                }
+
+                else if (displayName.equalsIgnoreCase("§f➢ §cReturn")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().addOresMenu(player, false);
+                    Gui.getInstance().addOresMenu(player, true, 1);
+                }
+
+                else if (displayName.equalsIgnoreCase("§f➢ Select All")) {player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().listOfBlocks.addAll(Gui.getInstance().getItems());
+                    Gui.getInstance().addOresMenu(player, false);
+                    Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
+                }
+
+                else if (itemStack.getType() != Material.WHITE_STAINED_GLASS_PANE && itemStack.getType() != Material.BLACK_STAINED_GLASS_PANE  && itemStack.getType() != Material.PLAYER_HEAD && itemStack.getType() != Material.AIR) {
+                    ItemStack cleanItem = new ItemStack(itemStack.getType());
+                    boolean itemExists = Gui.getInstance().listOfBlocks.stream()
+                            .anyMatch(item -> item.getType() == cleanItem.getType());
+
+                    if (!itemExists) {
+                        Gui.getInstance().listOfBlocks.add(cleanItem);
+                        Gui.getInstance().addOresMenu(player, false);
+                        Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
+                    } else {
+                        player.sendMessage("You can't select more than once time the same item");
+                    }
+                }
+                return;
+            }
+
+            if (inventoryTitle.equalsIgnoreCase("[OreRatio] RemoveOres Menu")) {
+                if (itemStack.getType() == Material.BARRIER && displayName.equalsIgnoreCase("➢ Main Page")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     Gui.getInstance().removeOresMenu(player, false);
                     Gui.getInstance().setupInventory(player, true);
                 }
-            }
 
-            else if (itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("§f➢ §cBefore")) {
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                Gui.getInstance().previousPage(player);
-                event.setCancelled(true);
-            }
+                else if (displayName.equalsIgnoreCase("§f➢ §cBefore")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().previousPage(player);
+                }
 
-            else if (itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("§f➢ §cAfter")) {
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                Gui.getInstance().nextPage(player);
-                event.setCancelled(true);
-            }
+                else if (displayName.equalsIgnoreCase("§f➢ §cAfter")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().nextPage(player);
+                }
 
-            else if (itemStack.getItemMeta().getDisplayName().equalsIgnoreCase("§f➢ §cReturn")) {
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-
-                if (Gui.getInstance().isAddOres) {
-                    Gui.getInstance().addOresMenu(player, false);
-                    Gui.getInstance().addOresMenu(player, true, 1);
-                } else {
+                else if (displayName.equalsIgnoreCase("§f➢ §cReturn")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     Gui.getInstance().removeOresMenu(player, false);
                     Gui.getInstance().removeOresMenu(player, true, 1);
                 }
-            }
 
-            else {
-                Material clickedMaterial = itemStack.getType();
-
-                if (clickedMaterial != null && clickedMaterial != Material.AIR) {
-                    event.setCancelled(true);
-                    ItemStack cleanItem = new ItemStack(clickedMaterial);
-
-                    if (Gui.getInstance().isAddOres) {
-                        boolean itemExists = Gui.getInstance().listOfBlocks.stream()
-                                .anyMatch(item -> item.getType() == cleanItem.getType());
-
-                        if (!itemExists) {
-                            Gui.getInstance().listOfBlocks.add(cleanItem);
-                            Gui.getInstance().addOresMenu(player, false);
-                            Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
-                        } else {
-                            player.sendMessage("You can't select more than once time the same item");
-                        }
-
-                    } else {
-                        Gui.getInstance().listOfBlocks.removeIf(item -> item.getType() == cleanItem.getType());
-                        Gui.getInstance().removeOresMenu(player, false);
-                        Gui.getInstance().removeOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
-                    }
+                else if (displayName.equalsIgnoreCase("§f➢ Deselect All")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().listOfBlocks.clear();
+                    Gui.getInstance().removeOresMenu(player, false);
+                    Gui.getInstance().removeOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
                 }
+
+                else if (itemStack.getType() != Material.WHITE_STAINED_GLASS_PANE && itemStack.getType() != Material.BLACK_STAINED_GLASS_PANE && itemStack.getType() != Material.PLAYER_HEAD && itemStack.getType() != Material.AIR) {
+                    ItemStack cleanItem = new ItemStack(itemStack.getType());
+                    Gui.getInstance().listOfBlocks.removeIf(item -> item.getType() == cleanItem.getType());
+                    Gui.getInstance().removeOresMenu(player, false);
+                    Gui.getInstance().removeOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
+                }
+                return;
             }
 
         } else {

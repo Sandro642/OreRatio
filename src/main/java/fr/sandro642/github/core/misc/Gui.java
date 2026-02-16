@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
-import net.minecraft.network.chat.Component;
 
 import java.net.URL;
 import java.util.*;
@@ -60,6 +59,18 @@ public class Gui {
         glasswhitemeta.setDisplayName(" ");
         glasswhite.setItemMeta(glasswhitemeta);
 
+        ItemStack glassblack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta glassblackmeta = glassblack.getItemMeta();
+        glassblackmeta.setDisplayName(" ");
+        glassblack.setItemMeta(glasswhitemeta);
+
+        ItemStack settings = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWMyZmYyNDRkZmM5ZGQzYTJjZWY2MzExMmU3NTAyZGM2MzY3YjBkMDIxMzI5NTAzNDdiMmI0NzlhNzIzNjZkZCJ9fX0=");
+        SkullMeta settingsMeta = (SkullMeta) settings.getItemMeta();
+        settingsMeta.setDisplayName("➢ Settings");
+        List<String> loreSettings = List.of("", "You can enable and disable", "functionalities");
+        settingsMeta.setLore(loreSettings);
+        settings.setItemMeta(settingsMeta);
+
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
         exitMeta.setDisplayName("➢ Exit");
@@ -102,9 +113,14 @@ public class Gui {
         }
 
         setupInventory.setItem(0, glasswhite);
+        setupInventory.setItem(1, settings);
+        setupInventory.setItem(2, glassblack);
         setupInventory.setItem(3, addOres);
+        setupInventory.setItem(4, glasswhite);
         setupInventory.setItem(5, removeOres);
-        setupInventory.setItem(8, exitItem);
+        setupInventory.setItem(6, glassblack);
+        setupInventory.setItem(7, exitItem);
+        setupInventory.setItem(8, glasswhite);
 
         if (status) {
             player.openInventory(setupInventory);
@@ -120,10 +136,25 @@ public class Gui {
     public Inventory addOresMenu(Player player, boolean status, int currentPage) {
         Inventory addOresInventory = Bukkit.createInventory(null, 54, "[OreRatio] AddOres Menu");
 
-        if (status) {
-            String actionBarMessage = "§6Page : " + currentPage + " / " + getTotalPages();
-            sendActionBar(player, actionBarMessage);
-        }
+        ItemStack information = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFjNDEzYThkMjZkNDY1NDFmYmVhZTRkM2U4MzBiYzRmYjE3YWIwNDAzODZkMTJjYzQzMDE0ZGE4N2VkOGFhZiJ9fX0=");
+        ItemMeta infoMeta = information.getItemMeta();
+        infoMeta.setDisplayName("You are on page(s) : " + getCurrentPage(player) + " / " + getTotalPages());
+        information.setItemMeta(infoMeta);
+
+        ItemStack selectAll = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWZhMWM2YzdlYWQ3NWEwNDU4NTM5NWY2MzEzNWRjOTZmYTA3OGZiOTIwNDg0Njk5ZWY4ZTU2NGUxNDJkNjRjYiJ9fX0=");
+        ItemMeta selectAllMeta = selectAll.getItemMeta();
+        selectAllMeta.setDisplayName("§f➢ Select All");
+        selectAll.setItemMeta(selectAllMeta);
+
+        ItemStack glasswhite = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+        ItemMeta glasswhitemeta = glasswhite.getItemMeta();
+        glasswhitemeta.setDisplayName(" ");
+        glasswhite.setItemMeta(glasswhitemeta);
+
+        ItemStack glassblack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta glassblackmeta = glassblack.getItemMeta();
+        glassblackmeta.setDisplayName(" ");
+        glassblack.setItemMeta(glasswhitemeta);
 
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
@@ -198,9 +229,49 @@ public class Gui {
             check++;
         }
 
-        addOresInventory.setItem(47, returnleft);
-        addOresInventory.setItem(49, returnstaff);
-        addOresInventory.setItem(51, returnright);
+        // Glass
+        addOresInventory.setItem(0, glasswhite);
+        addOresInventory.setItem(1, glassblack);
+        addOresInventory.setItem(2, glasswhite);
+        addOresInventory.setItem(3, glassblack);
+        addOresInventory.setItem(5, glassblack);
+        addOresInventory.setItem(6, glasswhite);
+        addOresInventory.setItem(7, glassblack);
+        addOresInventory.setItem(8, glasswhite);
+        addOresInventory.setItem(9, glassblack);
+        addOresInventory.setItem(17, glassblack);
+        addOresInventory.setItem(18, glasswhite);
+        addOresInventory.setItem(26, glasswhite);
+        addOresInventory.setItem(27, glassblack);
+        addOresInventory.setItem(35, glassblack);
+        addOresInventory.setItem(36, glasswhite);
+        addOresInventory.setItem(37, glassblack);
+        addOresInventory.setItem(38, glasswhite);
+        addOresInventory.setItem(39, glassblack);
+        addOresInventory.setItem(40, glasswhite);
+        addOresInventory.setItem(41, glassblack);
+        addOresInventory.setItem(42, glasswhite);
+        addOresInventory.setItem(43, glassblack);
+        addOresInventory.setItem(44, glasswhite);
+        addOresInventory.setItem(45, selectAll);
+        addOresInventory.setItem(46, glasswhite);
+        addOresInventory.setItem(48, glasswhite);
+        addOresInventory.setItem(50, glasswhite);
+
+
+        addOresInventory.setItem(4, information);
+
+        if (!(getTotalPages() <= 1)) {
+            addOresInventory.setItem(47, returnleft);
+            addOresInventory.setItem(49, returnstaff);
+            addOresInventory.setItem(51, returnright);
+        } else {
+            addOresInventory.setItem(47, glassblack);
+            addOresInventory.setItem(49, glassblack);
+            addOresInventory.setItem(51, glassblack);
+        }
+
+        addOresInventory.setItem(52, glasswhite);
         addOresInventory.setItem(53, exitItem);
 
         if (status) {
@@ -220,10 +291,25 @@ public class Gui {
     public Inventory removeOresMenu(Player player, boolean status, int currentPage) {
         Inventory removeOresInventory = Bukkit.createInventory(null, 54, "[OreRatio] RemoveOres Menu");
 
-        if (status) {
-            String actionBarMessage = "§6Page : " + currentPage + " / " + getTotalPages();
-            sendActionBar(player, actionBarMessage);
-        }
+        ItemStack information = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFjNDEzYThkMjZkNDY1NDFmYmVhZTRkM2U4MzBiYzRmYjE3YWIwNDAzODZkMTJjYzQzMDE0ZGE4N2VkOGFhZiJ9fX0=");
+        ItemMeta infoMeta = information.getItemMeta();
+        infoMeta.setDisplayName("You are on page(s) : " + getCurrentPage(player) + " / " + getTotalPages());
+        information.setItemMeta(infoMeta);
+
+        ItemStack deselectAll = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWQwMDJkYTU4NzJmNDZhY2FlNDI3Y2U3N2I0NzQ4MjQ3ZDJkYzBkOWYyMzdhN2MwY2MyYTdmZDEwY2Q1ZWVjNSJ9fX0=");
+        ItemMeta deselectAllMeta = deselectAll.getItemMeta();
+        deselectAllMeta.setDisplayName("§f➢ Deselect All");
+        deselectAll.setItemMeta(deselectAllMeta);
+
+        ItemStack glasswhite = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+        ItemMeta glasswhitemeta = glasswhite.getItemMeta();
+        glasswhitemeta.setDisplayName(" ");
+        glasswhite.setItemMeta(glasswhitemeta);
+
+        ItemStack glassblack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta glassblackmeta = glassblack.getItemMeta();
+        glassblackmeta.setDisplayName(" ");
+        glassblack.setItemMeta(glasswhitemeta);
 
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
@@ -287,9 +373,49 @@ public class Gui {
             check++;
         }
 
-        removeOresInventory.setItem(47, returnleft);
-        removeOresInventory.setItem(49, returnstaff);
-        removeOresInventory.setItem(51, returnright);
+        // Glass
+        removeOresInventory.setItem(0, glasswhite);
+        removeOresInventory.setItem(1, glassblack);
+        removeOresInventory.setItem(2, glasswhite);
+        removeOresInventory.setItem(3, glassblack);
+        removeOresInventory.setItem(5, glassblack);
+        removeOresInventory.setItem(6, glasswhite);
+        removeOresInventory.setItem(7, glassblack);
+        removeOresInventory.setItem(8, glasswhite);
+        removeOresInventory.setItem(9, glassblack);
+        removeOresInventory.setItem(17, glassblack);
+        removeOresInventory.setItem(18, glasswhite);
+        removeOresInventory.setItem(26, glasswhite);
+        removeOresInventory.setItem(27, glassblack);
+        removeOresInventory.setItem(35, glassblack);
+        removeOresInventory.setItem(36, glasswhite);
+        removeOresInventory.setItem(37, glassblack);
+        removeOresInventory.setItem(38, glasswhite);
+        removeOresInventory.setItem(39, glassblack);
+        removeOresInventory.setItem(40, glasswhite);
+        removeOresInventory.setItem(41, glassblack);
+        removeOresInventory.setItem(42, glasswhite);
+        removeOresInventory.setItem(43, glassblack);
+        removeOresInventory.setItem(44, glasswhite);
+        removeOresInventory.setItem(45, deselectAll);
+        removeOresInventory.setItem(46, glasswhite);
+        removeOresInventory.setItem(48, glasswhite);
+        removeOresInventory.setItem(50, glasswhite);
+
+
+        removeOresInventory.setItem(4, information);
+
+        if (!(getTotalPages() <= 1)) {
+            removeOresInventory.setItem(47, returnleft);
+            removeOresInventory.setItem(49, returnstaff);
+            removeOresInventory.setItem(51, returnright);
+        } else {
+            removeOresInventory.setItem(47, glassblack);
+            removeOresInventory.setItem(49, glassblack);
+            removeOresInventory.setItem(51, glassblack);
+        }
+
+        removeOresInventory.setItem(52, glasswhite);
         removeOresInventory.setItem(53, exitItem);
 
         if (status) {
@@ -311,7 +437,7 @@ public class Gui {
                 Material.LAPIS_ORE,
                 Material.NETHER_QUARTZ_ORE,
                 Material.REDSTONE_ORE,
-
+                //
                 Material.ACACIA_BOAT,
                 Material.ACACIA_CHEST_BOAT,
                 Material.EMERALD_ORE,
@@ -402,20 +528,4 @@ public class Gui {
     public static Gui getInstance() {
         return INSTANCE;
     }
-
-    private void sendActionBar(Player player, String message) {
-        Component component = Component.literal(message);
-        try {
-            Object craftPlayer = Class.forName("org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer").cast(player);
-            Object handle = craftPlayer.getClass().getMethod("getHandle").invoke(craftPlayer);
-            Object connection = handle.getClass().getField("connection").get(handle);
-            Object packet = Class.forName("net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket")
-                    .getConstructor(net.minecraft.network.chat.Component.class)
-                    .newInstance(component);
-            connection.getClass().getMethod("send", net.minecraft.network.protocol.Packet.class).invoke(connection, packet);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
