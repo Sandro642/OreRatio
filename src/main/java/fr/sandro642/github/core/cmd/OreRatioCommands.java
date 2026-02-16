@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 public class OreRatioCommands implements CommandExecutor {
-    // Gui Class Instance
-    private Gui gui = new Gui();
 
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command cmd, @NonNull String msg, @NonNull String @NonNull [] args) {
@@ -32,14 +30,14 @@ public class OreRatioCommands implements CommandExecutor {
                         case "setup":
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                             player.sendMessage("You've opened Setup Menu.");
-                            gui.setupInventory(player, true);
+                            Gui.getInstance().setupInventory(player, true);
                             break;
 
                         case "admin":
                             break;
 
                         default:
-                            player.sendMessage("Sous-commande inconnue : " + args[0]);
+                            player.sendMessage("unknown sub-command : " + args[0]);
                     }
                 }
             }

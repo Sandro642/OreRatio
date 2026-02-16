@@ -20,7 +20,11 @@ public class Gui {
 
     private static final Gui INSTANCE = new Gui();
 
-    private static final Map<Player, Integer> pagesSwap = new HashMap<>();
+    private final Map<Player, Integer> pagesSwap = new HashMap<>();
+
+    public ArrayList<ItemStack> listOfBlocks = new ArrayList<>();
+
+    public boolean isAddOres;
 
     public static ItemStack getCustomHead(String value) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -117,33 +121,33 @@ public class Gui {
     }
 
     public Inventory addOresMenu(Player player, boolean status, int currentPage) {
-        Inventory addOresInventory = Bukkit.createInventory(null, 54, "[OreRatio] ➢ AddOres Menu");
+        Inventory addOresInventory = Bukkit.createInventory(null, 54, "➢ AddOres Menu | Page : " + getCurrentPage(player) + " / " + getTotalPages());
 
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
-        exitMeta.setDisplayName("➢ Exit");
+        exitMeta.setDisplayName("➢ Main Page");
         exitItem.setItemMeta(exitMeta);
 
         ItemStack returnleft = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZhNGM4MjcxMDgzNzQ4MGRmNTc1Y2EwZDY0Y2VmMmZjZGFkYWVjZTcwOTFiNzA3NmI5MjNjNjdlNWY0ZTg0OSJ9fX0=");
         ItemMeta returnleftmeta = returnleft.getItemMeta();
-        returnleftmeta.setDisplayName("§f➢ §cAvant");
+        returnleftmeta.setDisplayName("§f➢ §cBefore");
         returnleft.setItemMeta(returnleftmeta);
 
 
         ItemStack returnright = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM5NTExOWRkNTIwMWEyNDJiODZiNDg2NmQ2ZjA0NTQxYjAwYjkyZWJkZDU3Y2UyNzkxOWZiNWYxMDJhNmRkZCJ9fX0=");
         ItemMeta returnrightmeta = returnright.getItemMeta();
-        returnrightmeta.setDisplayName("§f➢ §cAprès");
+        returnrightmeta.setDisplayName("§f➢ §cAfter");
         returnright.setItemMeta(returnrightmeta);
 
 
         ItemStack returnstaff = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZkMjQwMDAwMmFkOWZiYmJkMDA2Njk0MWViNWIxYTM4NGFiOWIwZTQ4YTE3OGVlOTZlNGQxMjlhNTIwODY1NCJ9fX0=");
         ItemMeta returnstaffmeta = returnstaff.getItemMeta();
-        returnstaffmeta.setDisplayName("§f➢ §cRetour");
+        returnstaffmeta.setDisplayName("§f➢ §cReturn");
         returnstaff.setItemMeta(returnstaffmeta);
 
         List<ItemStack> items = getItems();
 
-        List<ItemStack> displayItems = items.stream().skip(10L * (currentPage - 1)).limit(10).collect(Collectors.toList());
+        List<ItemStack> displayItems = items.stream().skip(21L * (currentPage - 1)).limit(21).collect(Collectors.toList());
         Logger.getInstance().INFO(String.valueOf(displayItems.size()));
 
         int slot = 10;
@@ -160,6 +164,30 @@ public class Gui {
                 item = new ItemStack(Material.AIR);
             } else {
                 item = displayItems.get(i);
+                ItemMeta itemMeta = item.getItemMeta();
+
+                if (itemMeta != null) {
+                    boolean isSelected = listOfBlocks.stream()
+                            .anyMatch(block -> block.getType() == item.getType());
+
+                    String color = isSelected ? "§e" : "§f";
+                    itemMeta.setDisplayName(color + item.getType().name());
+
+                    if (!isSelected) {
+                        List<String> lore = new ArrayList<>();
+                        lore.add("");
+                        lore.add("§7Click on it to add ore");
+                        lore.add("§7in the list of blocks scanned");
+                        itemMeta.setLore(lore);
+                    } else {
+                        List<String> lore = new ArrayList<>();
+                        lore.add("");
+                        lore.add("§7Selected !");
+                        itemMeta.setLore(lore);
+                    }
+
+                    item.setItemMeta(itemMeta);
+                }
             }
 
             addOresInventory.setItem(slot, item);
@@ -169,6 +197,7 @@ public class Gui {
         }
 
         addOresInventory.setItem(47, returnleft);
+        addOresInventory.setItem(49, returnstaff);
         addOresInventory.setItem(51, returnright);
         addOresInventory.setItem(53, exitItem);
 
@@ -182,14 +211,78 @@ public class Gui {
         return addOresInventory;
     }
 
-    public void removeOresMenu(Player player, boolean status) {
-        Inventory removeOresInventory = Bukkit.createInventory(null, 54, "[OreRatio] ➢ RemoveOres Menu");
+    public Inventory removeOresMenu(Player player, boolean status) {
+        return removeOresMenu(player, status, 1);
+    }
+
+    public Inventory removeOresMenu(Player player, boolean status, int currentPage) {
+        Inventory removeOresInventory = Bukkit.createInventory(null, 54, "➢ Rem.Ores Menu | Page : " + getCurrentPage(player) + " / " + getTotalPages());
 
         ItemStack exitItem = new ItemStack(Material.BARRIER);
         ItemMeta exitMeta = exitItem.getItemMeta();
-        exitMeta.setDisplayName("➢ Exit");
+        exitMeta.setDisplayName("➢ Main Page");
         exitItem.setItemMeta(exitMeta);
 
+        ItemStack returnleft = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZhNGM4MjcxMDgzNzQ4MGRmNTc1Y2EwZDY0Y2VmMmZjZGFkYWVjZTcwOTFiNzA3NmI5MjNjNjdlNWY0ZTg0OSJ9fX0=");
+        ItemMeta returnleftmeta = returnleft.getItemMeta();
+        returnleftmeta.setDisplayName("§f➢ §cBefore");
+        returnleft.setItemMeta(returnleftmeta);
+
+
+        ItemStack returnright = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM5NTExOWRkNTIwMWEyNDJiODZiNDg2NmQ2ZjA0NTQxYjAwYjkyZWJkZDU3Y2UyNzkxOWZiNWYxMDJhNmRkZCJ9fX0=");
+        ItemMeta returnrightmeta = returnright.getItemMeta();
+        returnrightmeta.setDisplayName("§f➢ §cAfter");
+        returnright.setItemMeta(returnrightmeta);
+
+
+        ItemStack returnstaff = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZkMjQwMDAwMmFkOWZiYmJkMDA2Njk0MWViNWIxYTM4NGFiOWIwZTQ4YTE3OGVlOTZlNGQxMjlhNTIwODY1NCJ9fX0=");
+        ItemMeta returnstaffmeta = returnstaff.getItemMeta();
+        returnstaffmeta.setDisplayName("§f➢ §cReturn");
+        returnstaff.setItemMeta(returnstaffmeta);
+
+        List<ItemStack> displayItems = listOfBlocks.stream().skip(21L * (currentPage - 1)).limit(21).collect(Collectors.toList());
+        Logger.getInstance().INFO(String.valueOf(displayItems.size()));
+
+        int slot = 10;
+        int check = 0;
+        for(int i = 0; i < 21; i++) {
+            if (check == 7) {
+                slot+= 2;
+                check = 0;
+            }
+
+            ItemStack item;
+
+            if (i > displayItems.size() - 1) {
+                item = new ItemStack(Material.AIR);
+            } else {
+                item = displayItems.get(i);
+                ItemMeta itemMeta = item.getItemMeta();
+
+                if (itemMeta != null) {
+                    boolean isSelected = listOfBlocks.stream()
+                            .anyMatch(block -> block.getType() == item.getType());
+
+                    String color = isSelected ? "§e" : "§f";
+                    itemMeta.setDisplayName(color + item.getType().name());
+                    List<String> lore = new ArrayList<>();
+                    lore.add("");
+                    lore.add("§7Click on it to remove ore");
+                    itemMeta.setLore(lore);
+
+                    item.setItemMeta(itemMeta);
+                }
+            }
+
+            removeOresInventory.setItem(slot, item);
+
+            slot++;
+            check++;
+        }
+
+        removeOresInventory.setItem(47, returnleft);
+        removeOresInventory.setItem(49, returnstaff);
+        removeOresInventory.setItem(51, returnright);
         removeOresInventory.setItem(53, exitItem);
 
         if (status) {
@@ -197,10 +290,7 @@ public class Gui {
         } else {
             player.closeInventory();
         }
-    }
-
-    public static Gui getInstance() {
-        return INSTANCE;
+        return removeOresInventory;
     }
 
     public List<ItemStack> getItems() {
@@ -213,7 +303,33 @@ public class Gui {
                 Material.IRON_ORE,
                 Material.LAPIS_ORE,
                 Material.NETHER_QUARTZ_ORE,
-                Material.REDSTONE_ORE
+                Material.REDSTONE_ORE,
+
+                Material.ACACIA_BOAT,
+                Material.ACACIA_CHEST_BOAT,
+                Material.EMERALD_ORE,
+                Material.DEEPSLATE_DIAMOND_ORE,
+                Material.DEEPSLATE_GOLD_ORE,
+                Material.DEEPSLATE_COAL_ORE,
+                Material.DEEPSLATE_COPPER_ORE,
+                Material.DEEPSLATE_IRON_ORE,
+                Material.DEEPSLATE_LAPIS_ORE,
+                Material.DEEPSLATE_REDSTONE_ORE,
+                Material.ANCIENT_DEBRIS,
+                Material.NETHER_GOLD_ORE,
+                Material.AMETHYST_CLUSTER,
+                Material.BIRCH_BOAT,
+                Material.CHERRY_BOAT,
+                Material.DARK_OAK_BOAT,
+                Material.JUNGLE_BOAT,
+                Material.MANGROVE_BOAT,
+                Material.OAK_BOAT,
+                Material.SPRUCE_BOAT,
+                Material.BAMBOO_BLOCK,
+                Material.WARPED_NYLIUM,
+                Material.CRIMSON_NYLIUM,
+                Material.BLACKSTONE,
+                Material.BASALT
         };
 
         for (Material material : oreMaterials) {
@@ -224,8 +340,8 @@ public class Gui {
     }
 
     public int getPagesNumber(List<ItemStack> items) {
-        int rest = items.size() % 10;
-        int pages = (items.size() - rest) / 10;
+        int rest = items.size() % 21;
+        int pages = (items.size() - rest) / 21;
 
         if (rest != 0) pages++;
 
@@ -233,43 +349,51 @@ public class Gui {
     }
 
     public void nextPage(Player player) {
-        int currentPage;
+        int currentPage = pagesSwap.getOrDefault(player, 1);
 
-        if(!pagesSwap.containsKey(player)) {
-            pagesSwap.put(player, 1);
-            currentPage = 1;
-        } else {
-            int before = pagesSwap.get(player);
+        List<ItemStack> itemsToCheck = isAddOres ? getItems() : listOfBlocks;
+        if (currentPage + 1 > getPagesNumber(itemsToCheck)) return;
 
-            if (before + 1 > getPagesNumber(getItems())) return;
+        currentPage++;
+        pagesSwap.put(player, currentPage);
 
-            pagesSwap.put(player, before + 1);
-
-            currentPage = pagesSwap.get(player);
-        }
         Logger.getInstance().INFO(String.valueOf(currentPage));
 
-        addOresMenu(player, true, currentPage);
+        if (isAddOres) {
+            addOresMenu(player, true, currentPage);
+        } else {
+            removeOresMenu(player, true, currentPage);
+        }
     }
 
     public void previousPage(Player player) {
-        int currentPage;
+        int currentPage = pagesSwap.getOrDefault(player, 1);
 
-        if(!pagesSwap.containsKey(player)) {
-            pagesSwap.put(player, 1);
-            currentPage = 1;
-        } else {
-            int before = pagesSwap.get(player);
+        if (currentPage - 1 < 1) return;
 
-            if (before - 1 > 1) return;
+        currentPage--;
+        pagesSwap.put(player, currentPage);
 
-            pagesSwap.put(player, before - 1);
-
-            currentPage = pagesSwap.get(player);
-        }
         Logger.getInstance().INFO(String.valueOf(currentPage));
 
-        addOresMenu(player, true, currentPage);
+        if (isAddOres) {
+            addOresMenu(player, true, currentPage);
+        } else {
+            removeOresMenu(player, true, currentPage);
+        }
+    }
+
+    public int getCurrentPage(Player player) {
+        return pagesSwap.getOrDefault(player, 1);
+    }
+
+    public int getTotalPages() {
+        List<ItemStack> itemsToCheck = isAddOres ? getItems() : listOfBlocks;
+        return getPagesNumber(itemsToCheck);
+    }
+
+    public static Gui getInstance() {
+        return INSTANCE;
     }
 
 }
