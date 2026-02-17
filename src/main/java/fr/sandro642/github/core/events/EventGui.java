@@ -36,16 +36,64 @@ public class EventGui implements Listener {
                     Gui.getInstance().setupInventory(player, false);
                     Gui.getInstance().addOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
                 }
+
                 else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("§b➢ Remove Ores")) {
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     Gui.getInstance().isAddOres = false;
                     Gui.getInstance().setupInventory(player, false);
                     Gui.getInstance().removeOresMenu(player, true, Gui.getInstance().getCurrentPage(player));
                 }
+
+                else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("➢ Settings")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().setupInventory(player, false);
+                    Gui.getInstance().setupSettings(player, true);
+                }
+
                 else if (itemStack.getType() == Material.BARRIER && displayName.equalsIgnoreCase("➢ Exit")) {
                     Gui.getInstance().setupInventory(player, false);
                 }
                 return;
+            }
+
+            if (inventoryTitle.equalsIgnoreCase("[OreRatio] Settings Menu")) {
+                if (itemStack.getType() == Material.BARRIER && displayName.equalsIgnoreCase("➢ Main Page")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().setupSettings(player, false);
+                    Gui.getInstance().setupInventory(player, true);
+                }
+
+                else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("➢ Modify Index")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().setupSettings(player, false);
+                    Gui.getInstance().modifyIndex(player, true);
+                }
+            }
+
+            if (inventoryTitle.equalsIgnoreCase("[OreRatio] Modify Index")) {
+                if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("§f➢ §cReturn")) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    Gui.getInstance().modifyIndex(player, false);
+                    Gui.getInstance().setupSettings(player, true);
+                }
+
+                else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("SCALE")) {
+                    Gui.getInstance().nextScaleCursor(player);
+                    Gui.getInstance().modifyIndex(player, false);
+                    Gui.getInstance().modifyIndex(player, true);
+                }
+
+                else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("Add")) {
+                    Gui.getInstance().addIndex(Gui.getInstance().scaleValue);
+                    Gui.getInstance().modifyIndex(player, false);
+                    Gui.getInstance().modifyIndex(player, true);
+                }
+
+                else if (itemStack.getType() == Material.PLAYER_HEAD && displayName.equalsIgnoreCase("Remove")) {
+                    Gui.getInstance().removeIndex(Gui.getInstance().scaleValue);
+                    Gui.getInstance().modifyIndex(player, false);
+                    Gui.getInstance().modifyIndex(player, true);
+                }
             }
 
             if (inventoryTitle.equalsIgnoreCase("[OreRatio] AddOres Menu")) {

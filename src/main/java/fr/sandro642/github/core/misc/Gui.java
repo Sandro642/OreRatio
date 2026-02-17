@@ -21,8 +21,12 @@ public class Gui {
     private static final Gui INSTANCE = new Gui();
 
     private final Map<Player, Integer> pagesSwap = new HashMap<>();
+    private final Map<Player, Integer> scaleCursor = new HashMap<>();
 
     public ArrayList<ItemStack> listOfBlocks = new ArrayList<>();
+
+    public double scaleValue = 0.01;  // L'échelle de scan (0.01, 0.05, 0.1, 0.5)
+    public double indexValue = 0.0;   // La valeur d'index qui s'incrémente
 
     public boolean isAddOres;
 
@@ -127,6 +131,190 @@ public class Gui {
         } else {
             player.closeInventory();
         }
+    }
+
+    public Inventory setupSettings(Player player, boolean status) {
+        Inventory setupSettings = Bukkit.createInventory(null, 54, "[OreRatio] Settings Menu");
+
+        ItemStack glasswhite = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+        ItemMeta glasswhitemeta = glasswhite.getItemMeta();
+        glasswhitemeta.setDisplayName(" ");
+        glasswhite.setItemMeta(glasswhitemeta);
+
+        ItemStack glassblack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta glassblackmeta = glassblack.getItemMeta();
+        glassblackmeta.setDisplayName(" ");
+        glassblack.setItemMeta(glasswhitemeta);
+
+        ItemStack exitItem = new ItemStack(Material.BARRIER);
+        ItemMeta exitMeta = exitItem.getItemMeta();
+        exitMeta.setDisplayName("➢ Main Page");
+        exitItem.setItemMeta(exitMeta);
+
+        ItemStack index = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTcxM2YyYTUyNmU5ZTY4MTA5MmRkMDllMjE4MGZjYzAwZmM5ZmMzM2QyODg5NTRjNTJmZWE2Yjk1OWJjNGU2ZSJ9fX0=");
+        ItemMeta indexMeta = index.getItemMeta();
+        indexMeta.setDisplayName("➢ Modify Index");
+        index.setItemMeta(indexMeta);
+
+        setupSettings.setItem(20, index);
+
+        // Glass
+        setupSettings.setItem(0, glasswhite);
+        setupSettings.setItem(1, glassblack);
+        setupSettings.setItem(2, glasswhite);
+        setupSettings.setItem(3, glassblack);
+        setupSettings.setItem(5, glassblack);
+        setupSettings.setItem(6, glasswhite);
+        setupSettings.setItem(7, glassblack);
+        setupSettings.setItem(8, glasswhite);
+        setupSettings.setItem(9, glassblack);
+        setupSettings.setItem(17, glassblack);
+        setupSettings.setItem(18, glasswhite);
+        setupSettings.setItem(26, glasswhite);
+        setupSettings.setItem(27, glassblack);
+        setupSettings.setItem(35, glassblack);
+        setupSettings.setItem(36, glasswhite);
+
+        setupSettings.setItem(44, glasswhite);
+        setupSettings.setItem(45, glassblack);
+        setupSettings.setItem(46, glasswhite);
+        setupSettings.setItem(48, glasswhite);
+        setupSettings.setItem(50, glasswhite);
+
+        setupSettings.setItem(47, glassblack);
+        setupSettings.setItem(49, glassblack);
+        setupSettings.setItem(51, glassblack);
+        setupSettings.setItem(52, glasswhite);
+        setupSettings.setItem(53, exitItem);
+
+        if (status) {
+            player.openInventory(setupSettings);
+        } else {
+            player.closeInventory();
+        }
+
+        return setupSettings;
+    }
+
+    public Inventory modifyIndex(Player player, boolean status) {
+        Inventory modifyIndex = Bukkit.createInventory(null, 27, "[OreRatio] Modify Index");
+
+        ItemStack glasswhite = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+        ItemMeta glasswhitemeta = glasswhite.getItemMeta();
+        glasswhitemeta.setDisplayName(" ");
+        glasswhite.setItemMeta(glasswhitemeta);
+
+        ItemStack glassblack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta glassblackmeta = glassblack.getItemMeta();
+        glassblackmeta.setDisplayName(" ");
+        glassblack.setItemMeta(glasswhitemeta);
+
+        ItemStack information = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFjNDEzYThkMjZkNDY1NDFmYmVhZTRkM2U4MzBiYzRmYjE3YWIwNDAzODZkMTJjYzQzMDE0ZGE4N2VkOGFhZiJ9fX0=");
+        ItemMeta infoMeta = information.getItemMeta();
+        infoMeta.setDisplayName("");
+        information.setItemMeta(infoMeta);
+
+        ItemStack scale = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQ5NTNjYWIxZDQ2ZDViMGRkMjg3ZjlmMjk3MDY4YTFiMzc0NzQ2YmFlM2FkOWI5MmFjMWIyYzJkMjFlNTg0ZCJ9fX0=");
+        ItemMeta scaleMeta = scale.getItemMeta();
+        scaleMeta.setDisplayName("SCALE");
+        List<String> lore = List.of(" ", "Scale selected : " + scaleValue);
+        scaleMeta.setLore(lore);
+        scale.setItemMeta(scaleMeta);
+
+        ItemStack addButton = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWZhMWM2YzdlYWQ3NWEwNDU4NTM5NWY2MzEzNWRjOTZmYTA3OGZiOTIwNDg0Njk5ZWY4ZTU2NGUxNDJkNjRjYiJ9fX0=");
+        ItemMeta addButtonMeta = addButton.getItemMeta();
+        addButtonMeta.setDisplayName("Add");
+        List<String> indexValueLore = List.of("" + scaleValue);
+        addButtonMeta.setLore(indexValueLore);
+        addButton.setItemMeta(addButtonMeta);
+
+        ItemStack removeButton = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWQwMDJkYTU4NzJmNDZhY2FlNDI3Y2U3N2I0NzQ4MjQ3ZDJkYzBkOWYyMzdhN2MwY2MyYTdmZDEwY2Q1ZWVjNSJ9fX0=");
+        ItemMeta removeButtonMeta = removeButton.getItemMeta();
+        removeButtonMeta.setDisplayName("Remove");
+        removeButtonMeta.setLore(indexValueLore);
+        removeButton.setItemMeta(removeButtonMeta);
+
+        ItemStack returnstaff = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZkMjQwMDAwMmFkOWZiYmJkMDA2Njk0MWViNWIxYTM4NGFiOWIwZTQ4YTE3OGVlOTZlNGQxMjlhNTIwODY1NCJ9fX0=");
+        ItemMeta returnstaffmeta = returnstaff.getItemMeta();
+        returnstaffmeta.setDisplayName("§f➢ §cReturn");
+        returnstaff.setItemMeta(returnstaffmeta);
+
+        List<ItemStack> glassIndex = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            glassIndex.add(new ItemStack(Material.RED_STAINED_GLASS_PANE));
+        }
+        if (indexValue >= 0.2) glassIndex.set(0, new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+        if (indexValue >= 0.4) glassIndex.set(1, new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+        if (indexValue >= 0.6) glassIndex.set(2, new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+        if (indexValue >= 0.8) glassIndex.set(3, new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+        if (indexValue >= 1.0) glassIndex.set(4, new ItemStack(Material.GREEN_STAINED_GLASS_PANE));
+
+        double[] thresholdValues = {0.2, 0.4, 0.6, 0.8, 1.0};
+        String[] thresholdLabels = {"0.2", "0.4", "0.6", "0.8", "1.0"};
+
+        for (int i = 0; i < 5; i++) {
+            ItemMeta glassMeta = glassIndex.get(i).getItemMeta();
+            if (glassMeta != null) {
+                double minThreshold = i == 0 ? 0 : thresholdValues[i - 1];
+                double maxThreshold = thresholdValues[i];
+
+                double progressInRange = Math.max(0, Math.min(indexValue, maxThreshold) - minThreshold);
+                double percentage = (progressInRange / (maxThreshold - minThreshold)) * 100;
+
+                glassMeta.setDisplayName("§fIndex: " + thresholdLabels[i]);
+                List<String> loreMeta = List.of("", "§7Progress: " + String.format("%.0f", percentage) + "%");
+                glassMeta.setLore(loreMeta);
+                glassIndex.get(i).setItemMeta(glassMeta);
+            }
+        }
+
+        modifyIndex.setItem(11, glassIndex.get(0));
+        modifyIndex.setItem(12, glassIndex.get(1));
+        modifyIndex.setItem(13, glassIndex.get(2));
+        modifyIndex.setItem(14, glassIndex.get(3));
+        modifyIndex.setItem(15, glassIndex.get(4));
+
+        // Glass
+        modifyIndex.setItem(0, glasswhite);
+        modifyIndex.setItem(1, glassblack);
+        modifyIndex.setItem(2, glasswhite);
+        modifyIndex.setItem(3, glassblack);
+        modifyIndex.setItem(5, glassblack);
+        modifyIndex.setItem(6, glasswhite);
+        modifyIndex.setItem(7, glassblack);
+        modifyIndex.setItem(8, glasswhite);
+        modifyIndex.setItem(9, glassblack);
+        modifyIndex.setItem(17, glassblack);
+        modifyIndex.setItem(18, glasswhite);
+        modifyIndex.setItem(19, glassblack);
+        modifyIndex.setItem(20, glasswhite);
+
+        if (!(indexValue == 0)) {
+            modifyIndex.setItem(21, removeButton);
+        } else {
+            modifyIndex.setItem(21, glassblack);
+        }
+
+        modifyIndex.setItem(22, scale);
+
+        if (!(indexValue >= 1.0)) {
+            modifyIndex.setItem(23, addButton);
+        } else {
+            modifyIndex.setItem(23, glassblack);
+        }
+
+        modifyIndex.setItem(24, glasswhite);
+        modifyIndex.setItem(25, glassblack);
+        modifyIndex.setItem(26, glasswhite);
+        modifyIndex.setItem(26, returnstaff);
+
+        if (status) {
+            player.openInventory(modifyIndex);
+        } else {
+            player.closeInventory();
+        }
+
+        return modifyIndex;
     }
 
     public Inventory addOresMenu(Player player, boolean status) {
@@ -526,6 +714,42 @@ public class Gui {
     public int getTotalPages() {
         List<ItemStack> itemsToCheck = isAddOres ? getItems() : listOfBlocks;
         return getPagesNumber(itemsToCheck);
+    }
+
+    public void nextScaleCursor(Player player) {
+        int currentCursor = scaleCursor.getOrDefault(player, 0);
+        currentCursor = (currentCursor + 1) % 4;
+        scaleCursor.put(player, currentCursor);
+        updateScaleValue(currentCursor);
+    }
+
+    public int getScaleCursor(Player player) {
+        return scaleCursor.getOrDefault(player, 0);
+    }
+
+    private void updateScaleValue(int cursor) {
+        switch (cursor) {
+            case 1:
+                scaleValue = 0.05;
+                break;
+            case 2:
+                scaleValue = 0.1;
+                break;
+            case 3:
+                scaleValue = 0.5;
+                break;
+            default:
+                scaleValue = 0.01;
+                break;
+        }
+    }
+
+    public void addIndex(double amount) {
+        indexValue = Math.min(1.0, indexValue + amount);
+    }
+
+    public void removeIndex(double amount) {
+        indexValue = Math.max(0.0, indexValue - amount);
     }
 
     public static Gui getInstance() {
