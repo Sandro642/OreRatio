@@ -211,7 +211,7 @@ public class Gui {
 
         ItemStack information = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFjNDEzYThkMjZkNDY1NDFmYmVhZTRkM2U4MzBiYzRmYjE3YWIwNDAzODZkMTJjYzQzMDE0ZGE4N2VkOGFhZiJ9fX0=");
         ItemMeta infoMeta = information.getItemMeta();
-        infoMeta.setDisplayName("");
+        infoMeta.setDisplayName("Ratio Tolerance Index : " + indexValue);
         information.setItemMeta(infoMeta);
 
         ItemStack scale = getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQ5NTNjYWIxZDQ2ZDViMGRkMjg3ZjlmMjk3MDY4YTFiMzc0NzQ2YmFlM2FkOWI5MmFjMWIyYzJkMjFlNTg0ZCJ9fX0=");
@@ -279,6 +279,7 @@ public class Gui {
         modifyIndex.setItem(1, glassblack);
         modifyIndex.setItem(2, glasswhite);
         modifyIndex.setItem(3, glassblack);
+        modifyIndex.setItem(4, information);
         modifyIndex.setItem(5, glassblack);
         modifyIndex.setItem(6, glasswhite);
         modifyIndex.setItem(7, glassblack);
@@ -626,31 +627,31 @@ public class Gui {
                 Material.NETHER_QUARTZ_ORE,
                 Material.REDSTONE_ORE,
                 //
-                Material.ACACIA_BOAT,
-                Material.ACACIA_CHEST_BOAT,
-                Material.EMERALD_ORE,
-                Material.DEEPSLATE_DIAMOND_ORE,
-                Material.DEEPSLATE_GOLD_ORE,
-                Material.DEEPSLATE_COAL_ORE,
-                Material.DEEPSLATE_COPPER_ORE,
-                Material.DEEPSLATE_IRON_ORE,
-                Material.DEEPSLATE_LAPIS_ORE,
-                Material.DEEPSLATE_REDSTONE_ORE,
-                Material.ANCIENT_DEBRIS,
-                Material.NETHER_GOLD_ORE,
-                Material.AMETHYST_CLUSTER,
-                Material.BIRCH_BOAT,
-                Material.CHERRY_BOAT,
-                Material.DARK_OAK_BOAT,
-                Material.JUNGLE_BOAT,
-                Material.MANGROVE_BOAT,
-                Material.OAK_BOAT,
-                Material.SPRUCE_BOAT,
-                Material.BAMBOO_BLOCK,
-                Material.WARPED_NYLIUM,
-                Material.CRIMSON_NYLIUM,
-                Material.BLACKSTONE,
-                Material.BASALT
+//                Material.ACACIA_BOAT,
+//                Material.ACACIA_CHEST_BOAT,
+//                Material.EMERALD_ORE,
+//                Material.DEEPSLATE_DIAMOND_ORE,
+//                Material.DEEPSLATE_GOLD_ORE,
+//                Material.DEEPSLATE_COAL_ORE,
+//                Material.DEEPSLATE_COPPER_ORE,
+//                Material.DEEPSLATE_IRON_ORE,
+//                Material.DEEPSLATE_LAPIS_ORE,
+//                Material.DEEPSLATE_REDSTONE_ORE,
+//                Material.ANCIENT_DEBRIS,
+//                Material.NETHER_GOLD_ORE,
+//                Material.AMETHYST_CLUSTER,
+//                Material.BIRCH_BOAT,
+//                Material.CHERRY_BOAT,
+//                Material.DARK_OAK_BOAT,
+//                Material.JUNGLE_BOAT,
+//                Material.MANGROVE_BOAT,
+//                Material.OAK_BOAT,
+//                Material.SPRUCE_BOAT,
+//                Material.BAMBOO_BLOCK,
+//                Material.WARPED_NYLIUM,
+//                Material.CRIMSON_NYLIUM,
+//                Material.BLACKSTONE,
+//                Material.BASALT
         };
 
         for (Material material : oreMaterials) {
